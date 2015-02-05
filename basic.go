@@ -35,9 +35,9 @@ func Basic(username string, password string) negroni.HandlerFunc {
 }
 
 // getCred get userid, password from request.
-func getCred(r *http.Request) (userId string, password string) {
+func getCred(req *http.Request) (userId string, password string) {
 	// Split authorization header.
-	s := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+	s := strings.SplitN(req.Header.Get("Authorization"), " ", 2)
 	if len(s) != 2 || s[0] != "Basic" {
 		return "", ""
 	}
