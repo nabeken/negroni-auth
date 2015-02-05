@@ -1,6 +1,6 @@
 # negroni-auth-dynamodb [![Build Status](https://travis-ci.org/nabeken/negroni-auth.png?branch=master)](https://travis-ci.org/nabeken/negroni-auth)
 
-Negroni middleware/handler for http basic authentication support DynamoDB forked from [martini-contrib/auth](https://github.com/nabeken/negroni-auth).
+Negroni middleware/handler for http basic authentication support DynamoDB forked from [nabeken/negroni-auth](https://github.com/nabeken/negroni-auth).
 
 ## Usage
 
