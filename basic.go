@@ -10,6 +10,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	GoAuthCacheAuthenticatedHeader = "go-auth-cache-Authenticated"
+)
+
 // requireAuth writes error to client which initiates the authentication process
 // or requires reauthentication.
 func requireAuth(w http.ResponseWriter) {
@@ -69,6 +73,13 @@ func BasicDynamoDB(tableName, userIdAttributeName, passwordAttributeName string)
 	const cost = 12
 
 	return func(w http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
+		// Check if the request is authenticated by go-auth-cache middleware.
+		authenticated := w.Header().Get(GoAuthCacheAuthenticatedHeader)
+		if authenticated == "true" {
+			next(w, req)
+			return
+		}
+
 		// Extract userid, password from request.
 		userId, password := getCred(req)
 
@@ -100,6 +111,10 @@ func BasicDynamoDB(tableName, userIdAttributeName, passwordAttributeName string)
 
 		// Password correct.
 		if r.Status() != http.StatusUnauthorized {
+			// Set authenticated header for go-auth-cache middleware to cache this request.
+			if authenticated == "false" {
+				w.Header().Set(GoAuthCacheAuthenticatedHeader, "cache")
+			}
 			next(w, req)
 		}
 	}
