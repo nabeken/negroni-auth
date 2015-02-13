@@ -8,6 +8,38 @@ import (
 	"github.com/AdRoll/goamz/dynamodb"
 )
 
+// DynamoDBBasic is a DataStore store userid, hashed password pairs on DynamoDB.
+type dynamoDBBasic struct {
+	table                 *dynamodb.Table
+	passwordAttributeName string
+}
+
+// NewDynamoDBBasic returns dynamoDBBasic builded from:
+// - DynamoDB table name (tableName)
+// - Attribute name that store userid (userIdAttributeName)
+// - Attribute name that store password (passwordAttributeName)
+func NewDynamoDBBasic(tableName, userIdAttributeName, passwordAttributeName string) (*dynamoDBBasic, error) {
+	return &dynamoDBBasic{
+		table: getDynamoDBTable(tableName, userIdAttributeName),
+		passwordAttributeName: passwordAttributeName,
+	}, nil
+}
+
+// dynamoDBBasic.Get return hashed password by userid.
+func (d *dynamoDBBasic) Get(userId string) (hashedPassword []byte, found bool) {
+	// Retrieve user credentials (userid, hashed password) from database by userid.
+	key := &dynamodb.Key{HashKey: userId}
+	userCred, err := d.table.GetItem(key)
+	// If there is no user has this userid. Fail.
+	if err != nil {
+		return nil, false
+	}
+	// Extract hashed password from credentials.
+	hashedPassword = []byte(userCred[d.passwordAttributeName].Value)
+
+	return hashedPassword, true
+}
+
 // getDynamoDBTable returns DynamoDB table by name and hash key.
 func getDynamoDBTable(tableName, hashKeyAttributeName string) *dynamodb.Table {
 	// Get AWS credentials from environment variables.
