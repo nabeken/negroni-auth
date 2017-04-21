@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/codegangsta/negroni"
+	"github.com/urfave/negroni"
 )
 
 func Test_BasicAuth(t *testing.T) {

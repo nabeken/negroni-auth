@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/codegangsta/negroni"
-	"github.com/pmylund/go-cache"
+	"github.com/urfave/negroni"
+	"github.com/patrickmn/go-cache"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/nabeken/negroni-auth/datastore"
